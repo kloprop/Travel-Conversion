@@ -1,15 +1,25 @@
 <template>
   <div class="big_container" :class = "{dark_container:dark}">
 <div class="content_container">
-  <div class="text_above_frame">{{displayWord}}</div>
-  <div class="frame" :class = "{dark_frame:dark}"> {{ displayTopic}}</div>
-  <div class="frame" :class="{show:show, hidden:hidden, dark_frame:dark}">{{ displayAnswer }}</div>
+  <div class="text_above_frame" :class = "{dark_component:dark}">{{displayWord}}</div>
+  <div class="frame" :class = "{dark_frame: dark, dark_component: dark }"> {{ displayTopic}}</div>
+  <div class="frame" :class="{show:show, hidden:hidden, dark_frame: dark, dark_component: dark }">{{ displayAnswer }}</div>
   <div class="btn-container_space">
     <button class="btn btn_secondary" @click = "toggle">Show</button>
     <button class="btn btn_secondary" @click="nextQuestion">Next</button>
   </div>
     <button class="btn btn_inline btn_absolute btn_accent" @click="changeMode" >Change Mode</button>
-</div>
+
+    <div class="drop_down" :class = "{dark_component:dark}">
+      <label for="question_bank">Question Bank:</label>
+      <select name="bank_name" id="question_bank" @change="handleBankChange">
+      <option value="1">Travel Converions</option>
+      <option value="2">Travel Vocab</option>
+      </select>
+    </div>
+  </div>
+
+
 </div>
 </template>
 <script>
@@ -88,6 +98,19 @@ export default {
     changeMode(){
       console.log("dark? " + this.dark);
       this.dark = !this.dark;
+    }, 
+    handleBankChange(event) {
+      // Access the selected dog name from the event
+      this.questionBank= event.target.value;
+      this.container = [];
+      this.resetDisplay();
+      // Do something with the selected dog name
+      console.log('Selected dog name:', this.questionBank);
+    }, 
+    resetDisplay(){
+      this.displayWord = 0;
+      this.displayTopic = "";
+      this.displayAnswer = "";
     }
   }
 }
@@ -177,6 +200,24 @@ body {
   color: white;
   transition-delay: 0.1s
 }
+.drop_down{
+  margin-top: 30px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  justify-content: center;
+}
+.drop_down select{
+  color: rgb(178, 174, 174);
+  background-color: rgb(11, 71, 66);
+  text-align: center;
+  border-radius: 5px;
+  width: 150px;
+  height: 25px;
+  border: none;
+  outline: none; 
+}
+
 
 .frame{
   border: 5px solid rgb(189,180,198);
@@ -195,6 +236,12 @@ body {
 }
 .dark_frame{
   border: 5px solid rgb(188,134,49);
-  color: white;
+}
+.dark_selection{
+
+}
+.dark_component{
+  color: #cec5c5;
+
 }
 </style>
