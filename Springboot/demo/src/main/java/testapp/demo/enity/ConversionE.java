@@ -1,8 +1,6 @@
 package testapp.demo.enity;
 
 import java.io.Serializable;
-import jakarta.annotation.Generated;
-import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -21,7 +19,7 @@ import lombok.Setter;
 @Getter
 @Setter
 
-public class PairE implements Serializable {
+public class ConversionE implements Serializable {
   @Id
   @GeneratedValue(strategy =  GenerationType.IDENTITY)
   private Long input_id;
@@ -30,7 +28,7 @@ public class PairE implements Serializable {
 
   private String translation;
 
-  @ManyToOne
+  @ManyToOne  
   @JoinColumn(name ="type_id")
   private TypeE typeId;
 

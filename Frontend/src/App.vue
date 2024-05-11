@@ -1,6 +1,7 @@
 <template>
   <div class="big_container" :class = "{dark_container:dark}">
 <div class="content_container">
+  <div class="text_above_frame">{{displayWord}}</div>
   <div class="frame" :class = "{dark_frame:dark}"> {{ displayTopic}}</div>
   <div class="frame" :class="{show:show, hidden:hidden, dark_frame:dark}">{{ displayAnswer }}</div>
   <div class="btn-container_space">
@@ -20,20 +21,36 @@ export default {
       dark: false,
       show: false,
       hidden: true,
-      source:[], 
+      conversionSource:[], 
+      vocabSource:[], 
+      topic:"conversation",
+      answer:" ",
       container: [],
       displayTopic: "",
-      displayAnswer: ""
+      displayAnswer: "",
+      totalWords:0,
+      remainingWords:0,
+      displayWord: 0, 
+      questionBank: 1
     }
   },
   mounted() {
-    axios.get('http://localhost:8081/api/v1/pairs')
+    axios.get('http://localhost:8081/api/v1/conversions')
       .then(response => {
-        this.source = response.data;
+        this.conversionSource = response.data;
       })
       .catch(error => {
         console.error('Error fetching data:', error);
-      })},
+      });
+      axios.get('http://localhost:8081/api/v1/vocabs')
+      .then(response => {
+        this.vocabSource = response.data;
+      })
+      .catch(error => {
+        console.error('Error fetching vocab data:', error);
+      });
+    
+    },
   methods: {
     toggle(){
       this.show = !this.show;
@@ -43,18 +60,31 @@ export default {
   return Math.floor(Math.random() * max);
 },
     nextQuestion() {
+      console.log(this.conversionSource[0][this.topic])
       this.hidden = true;
   if (this.container.length == 0){
-      this.container = [...this.source];
+    if (this.questionBank == 1){
+      this.container = [...this.conversionSource];
+      this.topic  = "conversation";
+      this.answer = "translation"
+    }
+    if (this.questionBank == 2){
+      this.container = [...this.vocabSource];
+      this.topic  = "chinese";
+      this.answer = "english"
+    }
+      this.totalWords = this.container.length;
       console.log("Reach the end")
       console.log("Size" + this.container.length);
   }
   let int = this.getRandomInt(this.container.length);
   console.log(int);
-  this.displayTopic = this.container[int].conversation;
-  this.displayAnswer = this.container[int].translation;
+  this.displayTopic = this.container[int][this.topic];
+  this.displayAnswer = this.container[int][this.answer];
   this.container.splice(int, 1);
-    }, 
+  this.remainingWords = this.totalWords-this.container.length;
+  this.displayWord = this.remainingWords +  "/" + this.totalWords     
+}, 
     changeMode(){
       console.log("dark? " + this.dark);
       this.dark = !this.dark;
@@ -96,6 +126,13 @@ body {
   flex-direction: column;
   gap: 15px;
 
+}
+.text_above_frame {
+  font-size: 24px;
+  color: #fff; /* Adjust color as needed */
+  position: absolute;
+  top: 60px; /* Adjust as needed */
+  right: 440px; /* Adjust as needed */
 }
 .btn{
   padding: 5px 10px;
